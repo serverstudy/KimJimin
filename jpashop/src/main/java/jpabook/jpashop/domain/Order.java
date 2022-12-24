@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 @Table(name = "orders")// 안 써주면 order로 인식해서 잘 안 된다.
 @Getter @Setter
@@ -18,7 +20,8 @@ public class Order {
     @Column(name = "order_id") // 보통 DBA 분들이 이 방식을 선호함.
     private Long id;
 
-    @ManyToOne
+    // (fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id") // FK 이름이 member_id
     private Member member;
 
@@ -26,7 +29,7 @@ public class Order {
     private List<OrderItem> orderItems = new ArrayList<>();
 
 
-    @OneToOne
+    @OneToOne(fetch = LAZY)
     @JoinColumn(name = "delivery_id") // 연관관계의 주인
     // 일대일 관계에서는 FK를 어느 쪽에든 둬도 되는데
     // 접근을 더 많이 하는 곳에 두는 게 편하다.
