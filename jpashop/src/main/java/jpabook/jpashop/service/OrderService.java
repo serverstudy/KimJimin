@@ -18,7 +18,7 @@ import java.util.OptionalDouble;
 // 근데 핵심 비즈니스 로직은 엔티티에 있고, 서비스는 엔티티에 필요한 요청을 위임, 호출, 연결하기만 한다.
 // 이런 방식을 도메인 모델 패턴이라고 한다.
 // 반대로 엔티티에는 getter, setter만 있고 비즈니스 로직이 거의 없고 웬만해서 다 서비스에서 처리하는 방식도 있다.
-// 이런 방식은 트랜잭션 스크립트 패턴이라고 한다. 
+// 이런 방식은 트랜잭션 스크립트 패턴이라고 한다.
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class OrderService {
