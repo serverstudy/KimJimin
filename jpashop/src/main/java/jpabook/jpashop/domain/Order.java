@@ -16,6 +16,7 @@ import static javax.persistence.FetchType.LAZY;
 @Entity
 @Table(name = "orders")// 안 써주면 order로 인식해서 잘 안 된다.
 @Getter @Setter
+// 도메인 : 엔티티가 모여 있는 계층, 모든 계층에서 사용
 public class Order {
 
     @Id
