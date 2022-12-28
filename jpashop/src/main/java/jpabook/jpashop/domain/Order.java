@@ -1,6 +1,8 @@
 package jpabook.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.aspectj.weaver.ast.Or;
 import org.hibernate.bytecode.enhance.spi.interceptor.AbstractLazyLoadInterceptor;
@@ -17,6 +19,7 @@ import static javax.persistence.FetchType.LAZY;
 @Table(name = "orders")// 안 써주면 order로 인식해서 잘 안 된다.
 @Getter @Setter
 // 도메인 : 엔티티가 모여 있는 계층, 모든 계층에서 사용
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
 
     @Id

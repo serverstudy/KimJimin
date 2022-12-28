@@ -1,7 +1,9 @@
 package jpabook.jpashop.domain;
 
 import jpabook.jpashop.domain.item.Item;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.aspectj.weaver.ast.Or;
 
@@ -11,6 +13,7 @@ import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem {
 
     @Id @GeneratedValue
@@ -25,6 +28,12 @@ public class OrderItem {
     private Order order;
     private int orderPrice; // 주문 가격
     private int count; // 주문 수량
+
+//    protected OrderItem(){
+//
+//    }
+    // createOrderItem으로 생성하지 않고 new OrderItem하여 set을 이용하는 것을 막기 위해
+    // @NoArgsConstructor(access = AccessLevel.PROTECTED) 가 만들어준다.
 
     //==생성 메서드==//
     public static OrderItem createOrderItem(Item item, int orderPrice, int count){
