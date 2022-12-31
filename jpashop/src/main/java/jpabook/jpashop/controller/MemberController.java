@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,7 +30,13 @@ public class MemberController {
     @PostMapping("/members/new")
     public String create(@Valid MemberForm form, BindingResult result){ // form이 파라미터로 넘어온다.
         // Member가 아니라 MemberForm을 따로 만들어줘서 MemberForm으로 처리하는 이유 : Member에는 id, orders 처럼 form 다룰 때 불필요한 것들 같이 있으니까.
-        // && Valid 쓰려면 Member에 @NotEmpty 써줘야 한다. 코드가 지저분해진다. 
+        // && Valid 쓰려면 Member에 @NotEmpty 써줘야 한다.
+        // Entity에 화면에서 처리되기 위해 필요한 코드들이 증가하면서 코드가 지저분해진다.
+        // 화면 종속적인 부분이 계속 늘어난다.
+        // 유지보수가 어려워진다.
+        // Entity는 최대한 다른 곳에 dependency 없이 순수하게 유지하는 게 중요하다. 오직 핵심 비즈니스 로직에만 dependency가 있도록
+        // 이래야 애플리케이션이 커져도 유지보수하기가 너무 힘들어지지 않는다.
+        // 화면에 맞는 API 같은 건 Entity가 아니라 DTO, Form 객체를 사용하는 게 좋다.
 
         // BindingResult를 안 써주면 @Valid로 검사할 때 오류가 발견됐으면 튕겨버리는데
         // BindingResult를 써주면 오류가 BindingResult에 담기고 코드가 이어서 실행된다.
@@ -51,4 +58,15 @@ public class MemberController {
         // redirect로 홈에 보내는 코드.
     }
 
+    @GetMapping("/members")
+    public String list(Model model){ // Model 이라는 객체를 통해서 화면에 데이터를 전달한다.
+        List<Member> members = memberService.findMembers();
+        // 사실 여기서도 member Entity를 쓰기보다는 DTO로 변환을 해서 쓰는 게 좋다.
+        // 필요한 데이터들만 뽑아 쓰는 것.
+        // 서버에서 템플릿 엔진으로 렌더링할 때는 이렇게 해도 큰 문제가 되지 않는데
+        // API를 만들 때는 절대 이렇게 해서는 안된다. 절대 Entity를 외부로 반환해서는 안된다.
+        // Entity에 필드를 변경하면 API 스펙도 바뀌어 버리는 문제 + 보안상 문제
+        model.addAttribute("members",members);
+        return "members/memberList";
+    }
 }
