@@ -65,10 +65,10 @@ public class ItemController {
     }
 
     @PostMapping("items/{itemId}/edit")
-    public String updateItem(@ModelAttribute("form") BookForm form){
-        Book book = new Book();
-
-        book.setId(form.getId()); // 조심해야 함. 임의 수정이 가능할 수도 있어서.
+    public String updateItem(@PathVariable Long itemId, @ModelAttribute("form") BookForm form){
+//        Book book = new Book();
+//
+//        book.setId(form.getId()); // 조심해야 함. 임의 수정이 가능할 수도 있어서.
         // 유저가 권한이 있는지 체크해주는 로직을 추가하거나
         // 객체를 세션에 담아 처리하거나
         // 등의 처리를 해줘야 한다.
@@ -79,13 +79,16 @@ public class ItemController {
         // -> JPA가 관리하지 않는다.
         // JPA가 관리하는 영속성 엔티티는 변경 감지가 일어나는데, 이는 그렇지 않다.
         // 이런 준영속성 엔티티를 수정하는 방법 : 1. 변경 감지 사용 2. 병합 사용
-        book.setName(form.getName());
-        book.setPrice(form.getPrice());
-        book.setStockQuantity(form.getStockQuantity());
-        book.setAuthor(form.getAuthor());
-        book.setIsbn(form.getIsbn());
+//        book.setName(form.getName());
+//        book.setPrice(form.getPrice());
+//        book.setStockQuantity(form.getStockQuantity());
+//        book.setAuthor(form.getAuthor());
+//        book.setIsbn(form.getIsbn());
+//        itemService.saveItem(book);
 
-        itemService.saveItem(book);
+        // 더 나은 설계는, 위의 주석 처리한 코드처럼 어설픈 객체를 새로 만들어 수행하는 것이 아니라 아래처럼.
+        itemService.updateItem(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
+        // 파라미터로 전달하기엔 업데이트할 게 너무 많다 -> DTO 만들어 이용
         return "redirect:/items";
     }
 }

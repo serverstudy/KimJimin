@@ -21,13 +21,13 @@ public class ItemService { // ItemRepository에 단순히 위임만 하는 클�
     }
 
     @Transactional
-    public void updateItem(Long itemId, Book param){
+    public void updateItem(Long itemId, String name, int price, int stockQuantity){
         Item findItem = itemRepository.findOne(itemId);
 
         // 실무에서는 이렇게 여러 개의 set으로 하지 말고 의미있는 메소드를 만들어서 이를 사용해야 한다.
-        findItem.setPrice(param.getPrice());
-        findItem.setName(param.getName());
-        findItem.setStockQuantity(param.getStockQuantity());
+        findItem.setName(name);
+        findItem.setPrice(price);
+        findItem.setStockQuantity(stockQuantity);
 //        itemRepository.save(findItem); // 할 필요 없다.
         // findOne으로 찾아 온 findItem은 영속 상태이다.
         // @Transactional에 의해 트랜잭션 커밋이 된다.
