@@ -23,7 +23,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.springframework.boot:spring-boot-devtools' // restartedMain으로 뜬다. 파일들에 대해 캐싱을 다 하지 않는다. 재시작 안하고 재컴파일만 하면 변경사항이 적용된다.
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	// 스프링 관련된 라이브러리들은 스프링 부트가 알아서 해주니까 버전 안 써도 되는 거고
 
 	// 외부 라이브러리는 그렇지 않기 떄문에 버전을 명시해 줘야 한다.
