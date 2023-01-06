@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
+import java.util.stream.Collectors;
 
 // @Controller
 // @ResponseBody : JSON을 XML로 바로 보낼 때 주로 사용하는 어노테이션
@@ -47,6 +49,35 @@ public class MemberApiController {
         memberService.update(id, request.getName()); // 커맨드
         Member findMember = memberService.findOne(id); // 쿼리
         return new UpdateMemberResponse(findMember.getId(), findMember.getName());
+    }
+
+    @GetMapping("/api/v1/members")
+    public List<Member> membersV1(){
+        return memberService.findMembers();
+        // Array로 반환하면 스펙이 굳어버린다. 유연성이 떨어지게 된다.
+        // 예를 들어 count를 같이 보내달라고 하는 경우, JSON 스펙이 깨져버리게 된다.
+    }
+
+    @GetMapping("/api/v2/members")
+    public Result memberV2(){
+        List<Member> findMembers = memberService.findMembers();
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());
+        return new Result(collect.size(), collect); // 오브젝트 타입으로 반환
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private int count;
+        private T data; // 리스트는 데이터 필드 값으로
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
     }
     @Data
     static class CreateMemberResponse {

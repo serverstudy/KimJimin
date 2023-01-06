@@ -1,5 +1,6 @@
 package jpabook.jpashop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,6 +27,10 @@ public class Member {
     // 양 쪽에 둘 다 써주는 것도 좋다
     private Address address;
 
+    // @JsonIgnore 쓰면 JSON 형태로 출력할 때 나오지 않는다.
+    // 다양한 API를 개발하게 될 테고, 어떤 API는 이를 필요로 하고 어떤 API는 그렇지 않다.
+    // 그러므로 이를 @JsonIgnore를 이용해서 Entity 단에서 처리하는 건 좋지 않다. 문제가 발생한다.
+    // 무엇보다 Entity에 프레젠테이션 계층에서 해야 할 일이 첨가되는 것은 좋지 않다.
     @OneToMany(mappedBy = "member") // '연관관계의 주인이 아닌 거울이다'
     private List<Order> orders = new ArrayList<>(); // 초기화를 생성자에서 해줄 수도 있지만 이게 best practice
     // null 문제에서 안전
