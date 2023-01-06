@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @NotEmpty // 프레젠테이션 계층을 위한 검증 로직을 Entity 넣은 게 됨. 
     private String name;
 
     @Embedded // 내장 타입을 포함한다는 뜻
