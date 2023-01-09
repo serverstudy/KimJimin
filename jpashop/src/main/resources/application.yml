@@ -1,8 +1,19 @@
 spring:
-# 별도의 설정이 없으면 메모리 모드로 동작하게 된다. (jdbc:h2:mem:test)
-logging:
-  level:
-    org.hibernate.SQL : debug # hibernate 가 남기는 모든 log 가 debug 모드로 돼서,
-    # hibernate 가 생성하는 모든 SQL 이 다 보인다
-    # logger 를 통해 찍는 것
-    org.hibernate.type: trace # 쿼리 파라미터 로그 남기기
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/jpashop
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        #        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 1000 #최적화 옵션
+
+logging.level:
+  org.hibernate.SQL: debug
+#  org.hibernate.type: trace
