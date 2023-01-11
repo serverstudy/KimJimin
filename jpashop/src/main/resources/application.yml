@@ -7,7 +7,8 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
+    # create : 애플리케이션 실행 시점에 테이블 드롭하고 다시 만든다.
     properties:
       hibernate:
         #        show_sql: true
