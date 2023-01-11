@@ -28,12 +28,16 @@ public class Order {
     private Long id;
 
     // (fetch = FetchType.LAZY)
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY) // 지연로딩이기에 new 해서 db에서 member 객체 바로 안 가져오고 order 데이터만 가져온다.
+    // 근데 그렇다고 null은 넣어둘 수 없으니 hibernate가 Proxy라이브러리를 사용해 Member를 상속받는 ProxyMember를 객체를 생성해 넣어둔다.
+    // 프록시 기술을 쓸 때 bytebuddy 라이브러리를 많이 써서 오류 로그에 ByteBuddyInterception이 찍히게 된다.
+    // 이렇게 있다가 멤버 객체를 다룰 일이 생기면 그때 디비 멤버 객체 sql을 보내 멤버 객체 값으로 채워준다. (프록시 초기화)
     @JoinColumn(name = "member_id") // FK 이름이 member_id
     private Member member;
 
     // cascade = CascadeType.ALL
     @OneToMany(mappedBy = "order", cascade = ALL) // persist 전파, delete할 때 같이 지움
+    // 기본이 LAZY라 세팅 안 함.
     private List<OrderItem> orderItems = new ArrayList<>();
 
 
