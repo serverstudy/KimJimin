@@ -28,6 +28,12 @@ public class OrderSimpleApiController {
         List<Order> all = orderRepository.findAllByString(new OrderSearch());
         // Order에 Member가 있어 Member로 가면 Member에 Order가 있어 또 Order로 가는 무한루프에 빠진다.
         // 양방향 연관관계 문제가 생긴다.
+
+        for (Order order : all) {
+            order.getMember().getName(); // Lazy 강제 초기화
+            order.getDelivery().getAddress(); // Lazy 강제 초기환
+        }
+        
         return all;
     }
 }
