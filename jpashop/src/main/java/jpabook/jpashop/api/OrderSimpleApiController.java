@@ -4,6 +4,7 @@ import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
+import jpabook.jpashop.repository.SimpleOrderQueryDto;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +62,21 @@ public class OrderSimpleApiController {
                 .map(o -> new SimpleOrderDto(o))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/api/v4/simple-orders")
+    public List<SimpleOrderQueryDto> ordersV4() {
+        return orderRepository.findOrderDtos();
+    }
+    // 재사용성은 v3가 더 좋다. v4는 화면에는 최적화되지만 재사용성이 없다.
+        // 리포지토리: 엔티티의 객체 그래프를 조회할 때 사용되는 것.
+        // 근데 API 스펙에 맞게 리포지토리 코드가 만들어져버린 상황.
+        // 리포지토리가 화면에 의존하게 되는, 논리적으로 계층이 깨지는 상황.
+    // 코드도 v3이 더 깔끔하다.
+    // v3보다 v4가 select 절이 더 간결하다. 네트워크를 덜 사용한다.
+        // 성능 테스트를 직접 해보는 게 맞다.
+        // 하지만 대개 성능 개선은 from, where 절에서 많이 일어나는 것이지 select 절에서의 성능 개선은 큰 영향을 미치지 않는다.
+        // select 절의 필드가 수십 개인 경우라면 그땐 고민을 해보는 게 좋다.
+    // tradeoff가 있다.
 
     @Data
     static class SimpleOrderDto {
