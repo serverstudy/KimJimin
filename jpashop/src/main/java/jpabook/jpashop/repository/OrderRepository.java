@@ -101,6 +101,16 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery(
+                "select o from Order o" +
+                        " join fetch o.member m" + // order를 가져올 때 member 객체 그래프도 한 번에 같이 가져온다.
+                        " join fetch o.delivery d", Order.class // join이면서 select 절에서 같이 가져온다
+                // fetch join: member, delivery가 LAZY이지만 이를 무시하고 프록시도 아니고 값을 모두 채워 가져온다.
+                // fetch: SQL에는 없고 JPA에만 있는 문법
+        ).getResultList();
+    }
+
     /**
      * QueryDsl
      */
