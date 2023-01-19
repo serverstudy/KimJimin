@@ -1,10 +1,10 @@
 package jpabook.jpashop.repository;
 
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.repository.order.simplequery.SimpleOrderQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-import org.thymeleaf.model.IStandaloneElementTag;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -110,19 +110,4 @@ public class OrderRepository {
                 // fetch: SQL에는 없고 JPA에만 있는 문법
         ).getResultList();
     }
-
-    public List<SimpleOrderQueryDto> findOrderDtos() {
-        return em.createQuery(
-                // 엔티티를 넘기면 엔티티의 식별자가 넘어가서 엔티티로 넘기면 안된다.
-                "select new jpabook.jpashop.repository.SimpleOrderQueryDto(o.id, m.name, o.orderDate, o.status, d.address)" +
-                        " from Order o" +
-                        " join o.member m" +
-                        " join o.delivery d", SimpleOrderQueryDto.class)
-                .getResultList();
-        // 기본적으로 JPA는 Entity나 Value Object만 반환할 수 있다.
-    }
-
-    /**
-     * QueryDsl
-     */
 }

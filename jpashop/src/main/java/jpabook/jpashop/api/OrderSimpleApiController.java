@@ -4,9 +4,9 @@ import jpabook.jpashop.domain.Address;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
-import jpabook.jpashop.repository.SimpleOrderQueryDto;
+import jpabook.jpashop.repository.order.simplequery.SimpleOrderQueryDto;
+import jpabook.jpashop.repository.order.simplequery.SimpleOrderQueryRepository;
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public class OrderSimpleApiController {
 
     private final OrderRepository orderRepository;
+    private final SimpleOrderQueryRepository simpleOrderQueryRepository;
 
     @GetMapping("/api/v1/simple-orders")
     public List<Order> ordersV1() {
@@ -65,7 +66,8 @@ public class OrderSimpleApiController {
 
     @GetMapping("/api/v4/simple-orders")
     public List<SimpleOrderQueryDto> ordersV4() {
-        return orderRepository.findOrderDtos();
+        return simpleOrderQueryRepository.findOrderDtos();
+        // 리포지토리는 가급적이면 순수한 엔티티를 조회하는 데 쓰인다.
     }
     // 재사용성은 v3가 더 좋다. v4는 화면에는 최적화되지만 재사용성이 없다.
         // 리포지토리: 엔티티의 객체 그래프를 조회할 때 사용되는 것.
