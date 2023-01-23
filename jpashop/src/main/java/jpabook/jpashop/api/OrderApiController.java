@@ -44,10 +44,11 @@ public class OrderApiController {
     @GetMapping("/api/v2/orders")
     public List<OrderDto> ordersV2() {
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
-        List<OrderDto> collect = orders.stream()
+        List<OrderDto> result = orders.stream()
                 .map(o -> new OrderDto(o))
                 .collect(Collectors.toList());
-        return collect;
+
+        return result;
     }
 
     @Data
@@ -58,17 +59,33 @@ public class OrderApiController {
         private LocalDateTime orderDate;
         private OrderStatus orderStatus;
         private Address address;
-        private List<OrderItem> orderItems; 
+        private List<OrderItemDto> orderItems;
+        // List<OrderItem>이면 DTO 안에 엔티티가 있는 상황.
+        // 엔티티에 대한 의존을 완전히 끊어야 한다.
+        // OrderItem도 DTO로 바꿔야 한다.
+
         public OrderDto(Order order) {
             orderId = order.getId();
             name = order.getMember().getName();
             orderDate = order.getOrderDate();
             orderStatus = order.getStatus();
             address = order.getDelivery().getAddress();
+            orderItems = order.getOrderItems().stream()
+                    .map(orderItem -> new OrderItemDto(orderItem))
+                    .collect(Collectors.toList());
+        }
+    }
 
-            // 프록시 강제 초기화
-            order.getOrderItems().stream().forEach(o -> o.getItem().getName());
-            orderItems = order.getOrderItems();
+    @Getter
+    static class OrderItemDto {
+
+        private String itemName;
+        private int orderPrice;
+        private int count;
+        public OrderItemDto(OrderItem orderItem) {
+            itemName = orderItem.getItem().getName();
+            orderPrice = orderItem.getOrderPrice();
+            count = orderItem.getCount();
         }
     }
 }
