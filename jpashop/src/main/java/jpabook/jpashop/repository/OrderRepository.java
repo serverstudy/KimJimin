@@ -122,6 +122,15 @@ public class OrderRepository {
                         " join fetch o.delivery d" +
                         " join fetch o.orderItems oi" +
                         " join fetch oi.item i", Order.class)
+                // 단 1대다에서 fetch join을 하면 페이징 불가능하다.
+                .setFirstResult(1)
+                .setMaxResults(100)
+                // warning이 뜬다. 디비 쿼리 단계에서는 1대다에서 '다' 기준으로 데이터가 늘어나버리니
+                // 제대로 페이징을 할 수 없어 메모리에서 페이징 처리를 해 버린다.
+                // 데이터가 많을 경우엔 out of memory 문제가 발생하게 된다.
+
+                // + 컬렉션 fetch join은 1개만 사용 가능하다.
+                // 둘 이상에 사용하면 데이터가 매우 큰 폭으로 늘어나며 부정합 문제가 발생한다.
                 .getResultList();
     }
 }
