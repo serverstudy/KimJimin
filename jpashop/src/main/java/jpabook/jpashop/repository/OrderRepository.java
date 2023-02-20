@@ -110,4 +110,15 @@ public class OrderRepository {
                 // fetch: SQL에는 없고 JPA에만 있는 문법
         ).getResultList();
     }
+
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                        // 참조 값까지 동일하게 두 배로 나온다.
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class)
+                .getResultList();
+    }
 }
