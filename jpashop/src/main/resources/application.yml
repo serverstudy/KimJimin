@@ -19,6 +19,9 @@ spring:
         # global하게 적용시키는 값이고, 디테일에 하고 싶다면 Entity BatchSize를 직접 지정해줄 수 있다.
         # toOne 관계면 Entity의 필드에.
         # 하지만 보통 주로 global하게 설정하여 적용한다.
+        # 100 ~ 1000 이 적당. 크게 잡을 수록 DB에 가해지는 순간 부하가 크며, 작게 할 수록 전송되는 쿼리의 수와 대기 시간이 증가한다.
+        # 100 정도로 두고 조금씩 늘리며 테스트해 보는 것이 좋다.
+        # 메모리 사용량은 batch fetch size에 상관 없이 동일하다. 애플리케이션은 루프를 돌려 결국엔 전체 데이터를 로딩해야 하기 때문이다. 
 logging.level:
   org.hibernate.SQL: debug
 #  org.hibernate.type: trace
