@@ -113,8 +113,11 @@ public class OrderRepository {
 
     public List<Order> findAllWithItem() {
         return em.createQuery(
-                        // 참조 값까지 동일하게 두 배로 나온다.
-                "select o from Order o" +
+                // distinct를 쓰지 않으면 참조 값까지 동일하게 두 배로 나온다.
+                // distinct를 쓰면 해결이 된다.
+                // 디비의 distinct와는 다르다. 디비의 distinct는 모든 컬럼 값이 똑같아야만 적용이 된다.
+                // JPA의 distinct는 디비에 distinct 키워드를 붙여주는 것 + 추가적인 일을 해준다. 엔티티의 id가 같으면 자체적으로 중복을 제거해준다.
+                "select distinct o from Order o" +
                         " join fetch o.member m" +
                         " join fetch o.delivery d" +
                         " join fetch o.orderItems oi" +
