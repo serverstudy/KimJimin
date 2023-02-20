@@ -111,6 +111,20 @@ public class OrderRepository {
         ).getResultList();
     }
 
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        // Order를 기준으로 toOne으로 걸린 것들은 fetch join으로 가져오기
+        return em.createQuery(
+                "select o from Order o" + // 여기까지만 써줘도 된다. 모두 in 쿼리 방식으로 변경된다.
+                        // 하지만 그만큼 네트워크를 더 많이 쓰게 되는 거니까 toOne은 그냥 join fetch로 써주는 게 좋다.
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class
+        )
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+        // toOne 관계에 fetch join한 것은 페이징 적용이 잘 된다.
+    }
+
     public List<Order> findAllWithItem() {
         return em.createQuery(
                 // distinct를 쓰지 않으면 참조 값까지 동일하게 두 배로 나온다.
@@ -123,8 +137,8 @@ public class OrderRepository {
                         " join fetch o.orderItems oi" +
                         " join fetch oi.item i", Order.class)
                 // 단 1대다에서 fetch join을 하면 페이징 불가능하다.
-                .setFirstResult(1)
-                .setMaxResults(100)
+//                .setFirstResult(1)
+//                .setMaxResults(100)
                 // warning이 뜬다. 디비 쿼리 단계에서는 1대다에서 '다' 기준으로 데이터가 늘어나버리니
                 // 제대로 페이징을 할 수 없어 메모리에서 페이징 처리를 해 버린다.
                 // 데이터가 많을 경우엔 out of memory 문제가 발생하게 된다.
