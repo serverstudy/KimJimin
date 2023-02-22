@@ -31,12 +31,20 @@ public class OrderQueryRepository {
     }
 
     public List<OrderQueryDto> findAllByDto_optimization() {
+
+        // 루트 조회 (toOne 관계들 먼저 조회)
         List<OrderQueryDto> result = findOrders();
 
-        List<Long> orderIds = result.stream()
-                .map(o -> o.getOrderId())
-                .collect(Collectors.toList());
+        // 맵 메모리에 올리기 (위에서 얻은 식별자 orderId로 toMany 관계인 OrderItem 한꺼번에 조회)
+        Map<Long, List<OrderItemQueryDto>> orderItemMap = findOrderItemMap(toOrderIds(result));
 
+        // 맵 메모리를 루프를 돌며 컬렉션 데이터 채우기
+        result.forEach( o-> o.setOrderItems(orderItemMap.get(o.getOrderId())));
+
+        return result;
+    }
+
+    private Map<Long, List<OrderItemQueryDto>> findOrderItemMap(List<Long> orderIds) {
         List<OrderItemQueryDto> orderItems = em.createQuery(
                         "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
                                 " from OrderItem oi" +
@@ -49,10 +57,13 @@ public class OrderQueryRepository {
         // 쿼리가 총 두 번만 나간다.
         Map<Long, List<OrderItemQueryDto>> orderItemMap = orderItems.stream()
                 .collect(Collectors.groupingBy(orderItemQueryDto -> orderItemQueryDto.getOrderId()));
+        return orderItemMap;
+    }
 
-        result.forEach( o-> o.setOrderItems(orderItemMap.get(o.getOrderId())));
-
-        return result;
+    private List<Long> toOrderIds(List<OrderQueryDto> result) {
+        return result.stream()
+                .map(o -> o.getOrderId())
+                .collect(Collectors.toList());
     }
 
     private List<OrderItemQueryDto> findOrderItems(Long orderId) {
