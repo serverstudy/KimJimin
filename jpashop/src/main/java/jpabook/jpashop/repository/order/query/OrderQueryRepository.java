@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -28,6 +30,31 @@ public class OrderQueryRepository {
         return result;
     }
 
+    public List<OrderQueryDto> findAllByDto_optimization() {
+        List<OrderQueryDto> result = findOrders();
+
+        List<Long> orderIds = result.stream()
+                .map(o -> o.getOrderId())
+                .collect(Collectors.toList());
+
+        List<OrderItemQueryDto> orderItems = em.createQuery(
+                        "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+                                " from OrderItem oi" +
+                                " join oi.item i" + // OrderItem 입장에서 item은 toOne 관계라서 join 해도 괜찮다.
+                                " where oi.order.id in :orderIds", OrderItemQueryDto.class
+                ).setParameter("orderIds", orderIds)
+                .getResultList();
+        // V4와의 차이점: 쿼리는 한 번만 보내고
+        // 메모리에서 매칭을 해서 값을 세팅.
+        // 쿼리가 총 두 번만 나간다.
+        Map<Long, List<OrderItemQueryDto>> orderItemMap = orderItems.stream()
+                .collect(Collectors.groupingBy(orderItemQueryDto -> orderItemQueryDto.getOrderId()));
+
+        result.forEach( o-> o.setOrderItems(orderItemMap.get(o.getOrderId())));
+
+        return result;
+    }
+
     private List<OrderItemQueryDto> findOrderItems(Long orderId) {
         return em.createQuery(
                 "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
@@ -47,4 +74,5 @@ public class OrderQueryRepository {
                 // toOne 관계는 조인을 해도 데이터의 row 수가 증가하지 않아 toOne 관계들은 join 해서 최적화하여 조회
         ).getResultList();
     }
+    
 }
