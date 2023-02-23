@@ -110,4 +110,41 @@ public class OrderRepository {
                 // fetch: SQL에는 없고 JPA에만 있는 문법
         ).getResultList();
     }
+
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        // Order를 기준으로 toOne으로 걸린 것들은 fetch join으로 가져오기
+        return em.createQuery(
+                "select o from Order o" + // 여기까지만 써줘도 된다. 모두 in 쿼리 방식으로 변경된다.
+                        // 하지만 그만큼 네트워크를 더 많이 쓰게 되는 거니까 toOne은 그냥 join fetch로 써주는 게 좋다.
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class
+        )
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+        // toOne 관계에 fetch join한 것은 페이징 적용이 잘 된다.
+    }
+
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                // distinct를 쓰지 않으면 참조 값까지 동일하게 두 배로 나온다.
+                // distinct를 쓰면 해결이 된다.
+                // 디비의 distinct와는 다르다. 디비의 distinct는 모든 컬럼 값이 똑같아야만 적용이 된다.
+                // JPA의 distinct는 디비에 distinct 키워드를 붙여주는 것 + 추가적인 일을 해준다. 엔티티의 id가 같으면 자체적으로 중복을 제거해준다.
+                "select distinct o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class)
+                // 단 1대다에서 fetch join을 하면 페이징 불가능하다.
+//                .setFirstResult(1)
+//                .setMaxResults(100)
+                // warning이 뜬다. 디비 쿼리 단계에서는 1대다에서 '다' 기준으로 데이터가 늘어나버리니
+                // 제대로 페이징을 할 수 없어 메모리에서 페이징 처리를 해 버린다.
+                // 데이터가 많을 경우엔 out of memory 문제가 발생하게 된다.
+
+                // + 컬렉션 fetch join은 1개만 사용 가능하다.
+                // 둘 이상에 사용하면 데이터가 매우 큰 폭으로 늘어나며 부정합 문제가 발생한다.
+                .getResultList();
+    }
 }
