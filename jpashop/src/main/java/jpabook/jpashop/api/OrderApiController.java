@@ -5,6 +5,7 @@ import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderItem;
 import jpabook.jpashop.domain.OrderStatus;
 import jpabook.jpashop.repository.OrderRepository;
+import jpabook.jpashop.repository.order.query.OrderFlatDto;
 import jpabook.jpashop.repository.order.query.OrderQueryDto;
 import jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import jpabook.jpashop.repository.OrderSearch;
@@ -93,6 +94,12 @@ public class OrderApiController {
         return orderQueryRepository.findAllByDto_optimization();
     }
 
+    // 장점: 쿼리 한 번으로 동작된다.
+    // 단점: 의도한 대로의 페이징이 불가하다. 
+    @GetMapping("/api/v6/orders")
+    public List<OrderFlatDto> ordersV6() {
+        return orderQueryRepository.findAllByDto_flat();
+    }
 
     @Data
     static class OrderDto {

@@ -85,5 +85,15 @@ public class OrderQueryRepository {
                 // toOne 관계는 조인을 해도 데이터의 row 수가 증가하지 않아 toOne 관계들은 join 해서 최적화하여 조회
         ).getResultList();
     }
-    
+
+    // Order와 OrderItem, OrderItem과 Item을 조인해서 한 번에 가져오는 방식
+    public List<OrderFlatDto> findAllByDto_flat() {
+        return em.createQuery("select new jpabook.jpashop.repository.order.query.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
+                " from Order o" +
+                " join o.member m"+
+                " join o.delivery d" +
+                " join o.orderItems oi"+
+                " join oi.item i ", OrderFlatDto.class)
+                .getResultList();
+    }
 }
