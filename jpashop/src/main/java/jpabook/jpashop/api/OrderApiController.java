@@ -31,6 +31,8 @@ public class OrderApiController {
     private final OrderRepository orderRepository;
     private final OrderQueryRepository orderQueryRepository;
 
+    // 엔티티를 조회해 엔티티로 반환
+    // 엔티티 스펙이 변하면 API 스펙도 변하기에 사용하면 안되는 방식
     @GetMapping("/api/v1/orders")
     public List<Order> ordersV1() {
         List<Order> all = orderRepository.findAllByString(new OrderSearch());
@@ -49,6 +51,7 @@ public class OrderApiController {
         return all;
     }
 
+    // 엔티티를 조회해 DTO로 반환
     @GetMapping("/api/v2/orders")
     public List<OrderDto> ordersV2() {
         List<Order> orders = orderRepository.findAllByString(new OrderSearch());
@@ -59,6 +62,9 @@ public class OrderApiController {
         return result;
     }
 
+    // 엔티티를 조회해 DTO로 반환
+    // 쿼리 수 최적화 + 페이징 X
+    // 컬렉션까지 한 번에 fetch join
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3() {
         List<Order> orders = orderRepository.findAllWithItem();
@@ -73,6 +79,10 @@ public class OrderApiController {
         return result;
     }
 
+    // 엔티티를 조회해 DTO로 반환
+    // 쿼리 수 최적화 + 페이징 O
+    // toOne 관계는 fetch join으로 쿼리 수 최적화
+    // 컬렉션은 fetch join에서 제외(지연 로딩 유지) in 쿼리로 가져옴 -> 페이징 가능
     @GetMapping("/api/v3.1/orders")
     public List<OrderDto> ordersV3_page(
             @RequestParam(value = "offset", defaultValue = "0") int offset,
@@ -87,16 +97,22 @@ public class OrderApiController {
         return result;
     }
 
+    // JPA에서 DTO로 직접 조회해 DTO로 반환
+       // 엔티티로 조회하는 방식 때와는 다르게 성능 최적화 혹은 최적화 방식 변경 시 많은 양의 코드 수정 필요
     @GetMapping("/api/v4/orders")
     public List<OrderQueryDto> ordersV4() {
         return orderQueryRepository.findOrderQueryDtos();
     }
 
+    // JPA에서 DTO로 직접 조회해 DTO로 반환
+    // 루트 조회 + 컬렉션 부분은 in 절로 따로 조회 및 채우기
     @GetMapping("/api/v5/orders")
     public List<OrderQueryDto> ordersV5() {
         return orderQueryRepository.findAllByDto_optimization();
     }
 
+    // JPA에서 DTO로 직접 조회해 DTO로 반환
+    // 모든 필드를 조인해서 한 번에 가져오기
     // 장점: 쿼리 한 번으로 동작된다.
     // 단점: 의도한 대로의 페이징이 불가하다.
     @GetMapping("/api/v6/orders")
