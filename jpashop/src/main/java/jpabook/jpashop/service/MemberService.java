@@ -41,6 +41,8 @@ public class MemberService {
      * 회원 가입
      */
     @Transactional // 읽기 전용인 기능이 많으니까 전체를 readOnly = true로 해두고 이 기능만 false로
+    // 영속성 컨텍스트 만들어지고 데이터베이스 커넥션 가져오고
+    // OSIV OFF라면 로직이 끝난 후 데이터 베이스 커넥션 플러시 커밋하고 영속성 컨텍스트를 없애고 데이터 베이스 커넥션 반환
     public Long join(Member member){
         validateDuplicateMember(member); // 중복 회원 검증
         memberRepository.save(member);
