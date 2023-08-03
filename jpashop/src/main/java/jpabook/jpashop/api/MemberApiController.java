@@ -25,7 +25,7 @@ public class MemberApiController {
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member){
         // @RequestBody : JSON으로 온 body를 Member에 그대로 매핑해서 넣어준다.
 
-        Long id = memberService.join(member);
+        Long id = memberService.join(member); // OSIV OFF라면 이렇게 반환된 후엔 영속성 컨텍스트도 끝, 데이터베이스 커넥션도 끝
         return new CreateMemberResponse(id);
     }
 

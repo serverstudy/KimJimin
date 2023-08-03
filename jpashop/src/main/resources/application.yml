@@ -6,6 +6,7 @@ spring:
     driver-class-name: org.h2.Driver
 
   jpa:
+#    open-in-view: false
     hibernate:
       ddl-auto: create
     # create : 애플리케이션 실행 시점에 테이블 드롭하고 다시 만든다.
