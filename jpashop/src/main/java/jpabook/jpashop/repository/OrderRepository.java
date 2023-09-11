@@ -17,6 +17,9 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jpabook.jpashop.domain.QMember.member;
+import static jpabook.jpashop.domain.QOrder.order;
+
 @Repository // JPA를 직접 사용하는 계층, 엔티티 매니저 사용
 @RequiredArgsConstructor
 public class OrderRepository {
@@ -108,9 +111,6 @@ public class OrderRepository {
 
     public List<Order> findAll(OrderSearch orderSearch) {
         JPAQueryFactory query = new JPAQueryFactory(em);
-        QOrder order = QOrder.order;
-        QMember member = QMember.member;
-
 
         return query
                 .select(order)
@@ -133,7 +133,7 @@ public class OrderRepository {
         if (statusCond == null) {
             return null;
         }
-        return QOrder.order.status.eq(statusCond);
+        return order.status.eq(statusCond);
     }
 
     public List<Order> findAllWithMemberDelivery() {
