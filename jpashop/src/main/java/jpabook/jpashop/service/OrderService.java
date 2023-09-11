@@ -36,7 +36,7 @@ public class OrderService {
     public Long order(Long memberId, Long itemId, int count){
 
         // 엔티티 조회
-        Member member = memberRepository.findOne(memberId);
+        Member member = memberRepository.findById(memberId).get();
         Item item = itemRepository.findOne(itemId);
 
         // 배송정보 생성
@@ -72,7 +72,7 @@ public class OrderService {
      * 검색
      */
     public List<Order> findOrders(OrderSearch orderSearch){
-        return orderRepository.findAllByString(orderSearch);
+        return orderRepository.findAll(orderSearch);
         // 이렇게 단순 위임만 하는 코드의 경우는 서비스 코드는 생략하고 컨트롤러에서 레포지토리 접근하게 해도 된다.
     }
 }

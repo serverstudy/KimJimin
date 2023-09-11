@@ -69,12 +69,12 @@ public class MemberService {
      * 회원 한 명 조회
      */
     public Member findOne(Long memberId){
-        return memberRepository.findOne(memberId);
+        return memberRepository.findById(memberId).get();
     }
 
     @Transactional
     public void update(Long id, String name) {
-        Member member = memberRepository.findOne(id);
+        Member member = memberRepository.findById(id).get();
         member.setName(name);
         // member를 반환할 수도 있지만 그렇게 되면 커맨드와 쿼리를 한 메소드 안에서 하는 게 된다.
         // id 정도만 반환하거나 아예 반환하지 않는 게 깔끔하다.
