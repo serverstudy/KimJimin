@@ -4,7 +4,7 @@
   - [웹 계층 개발](https://github.com/serverstudy/KimJimin/pull/6)
   - [API 개발 기본-CRU REST API 개발](https://github.com/serverstudy/KimJimin/pull/8)
   - [API 고급 - 지연 로딩 사용으로 인한 문제 해결 및 성능 최적화](https://github.com/serverstudy/KimJimin/pull/10)
-    - DTO 도입 밒 fetch join 사용
+    - DTO 도입 및 fetch join 사용
   - [API 고급 - 컬렉션 조회 최적화](https://github.com/serverstudy/KimJimin/pull/12)
     - toOne 관계들은 join 해서 최적화하여 조회, toMany 관계의 컬렉션들은 방식에 따라 언제 불러오고 어떻게 데이터 채울지 다양. 페이징 가능 여부 등 장단점 존재
   - [API 고급 - 실무 필수 최적화](https://github.com/serverstudy/KimJimin/pull/15)
